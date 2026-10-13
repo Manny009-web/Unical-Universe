@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UniVerse - UNICAL Student Portal</title>
+<style>
+:root{--primary:#0A192F;--gold:#F5C518;--bg:#F4F6F9;--card:#fff;--text:#222;--light:#666;--line:#e5e7eb;--ok:#25D366;--bad:#DC2626;--item:#F9FAFB;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--card:#131c2e;--text:#e8ecf3;--light:#9aa6b8;--line:#243049;--item:#18233a}}
+:root[data-theme="dark"]{--bg:#0b1220;--card:#131c2e;--text:#e8ecf3;--light:#9aa6b8;--line:#243049;--item:#18233a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Verdana,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100%}
+header{background:var(--primary);color:#fff;padding:1rem;display:flex;flex-direction:column;gap:.7rem}
+header h1{color:var(--gold);font-size:1.4rem}
+.filters{display:flex;gap:.5rem;flex-wrap:wrap}
+select,input{padding:.6rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;background:var(--card);color:var(--text);width:100%}
+.filters select{width:auto;flex:1;min-width:140px}
+main{max-width:800px;margin:1rem auto;padding:0 1rem}
+.card{background:var(--card);padding:1.1rem;border-radius:8px;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card h2{font-size:1.1rem;margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:2px solid var(--line)}
+.lec{background:var(--item);border-left:4px solid var(--gold);padding:.8rem;margin-bottom:.7rem;border-radius:0 6px 6px 0}
+.lec h4{font-size:1rem}.lec p{font-size:.88rem;color:var(--light);margin-top:.2rem}
+.tag{font-size:.72rem;background:var(--primary);color:var(--gold);padding:.1rem .45rem;border-radius:4px;margin-right:.4rem}
+button{background:var(--primary);color:#fff;border:0;padding:.65rem 1rem;border-radius:6px;font-weight:bold;cursor:pointer;font-size:.95rem}
+button.sm{padding:.3rem .6rem;font-size:.8rem;margin:.5rem .4rem 0 0}button.del{background:var(--bad)}
+.grid{display:grid;gap:.6rem}.row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.wa{display:block;background:var(--ok);color:#fff;text-decoration:none;text-align:center;padding:.8rem;border-radius:6px;font-weight:bold;margin-top:.8rem}
+.note{font-size:.82rem;color:var(--light)}.empty{color:var(--light);text-align:center;padding:1rem}
+.hidden{display:none}
+.spon{display:flex;flex-direction:column;gap:.2rem;background:var(--item);border:1px dashed var(--gold);padding:.7rem;border-radius:6px;margin-bottom:.6rem;color:var(--text);text-decoration:none}
+.spon span{font-size:.85rem;color:var(--light)}.spon-h{font-size:.7rem;color:var(--light);margin-bottom:.4rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏛️ UniVerse · UNICAL</h1>
+  <div class="filters">
+    <select id="fac" aria-label="Faculty"></select>
+    <select id="day" aria-label="Day"></select>
+  </div>
+</header>
+<main>
+  <div class="card hidden" id="spons">
+    <p class="spon-h">SPONSORED</p>
+    <div id="sponsList"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="lt">Lectures</h2>
+    <p class="note" id="src"></p>
+    <div id="list"></div>
+  </div>
+
+  <div class="card" id="auth">
+    <h2>🔐 Course Rep / Lecturer Login</h2>
+    <div id="loggedOut" class="grid">
+      <input id="em" type="email" placeholder="Email" autocomplete="email">
+      <input id="pw" type="password" placeholder="Password (min 6 characters)" autocomplete="current-password">
+      <div class="row"><button id="login">Log in</button><button id="signup" style="background:var(--light)">Create account</button></div>
+      <p class="note">New accounts can only post lectures after the site admin approves them.</p>
+    </div>
+    <div id="loggedIn" class="hidden grid">
+      <p id="who" class="note"></p>
+      <p id="pending" class="note hidden"></p>
+      <button id="logout" style="background:var(--light)">Log out</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="admin">
+    <h2>✏️ Course Rep / Lecturer Panel</h2>
+    <div class="grid">
+      <input id="f-code" placeholder="Course code (e.g. LAW 211)">
+      <input id="f-title" placeholder="Course title">
+      <div class="row"><select id="f-fac"></select><select id="f-day"></select></div>
+      <div class="row"><input id="f-start" type="time"><input id="f-end" type="time"></div>
+      <input id="f-venue" placeholder="Venue">
+      <input id="f-by" placeholder="Posted by (name / role)">
+      <button id="save">Save lecture</button>
+      <button id="cancel" class="hidden" style="background:var(--light)">Cancel edit</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📚 Past Questions</h2>
+    <p class="note">Student-run service. Tap below to chat on WhatsApp about available past questions and payment. Confirm what you're buying before you pay.</p>
+    <div id="pqList"></div>
+    <p id="payMsg" class="note"></p>
+    <a class="wa" id="wa" target="_blank" rel="noopener">💬 Buy Past Questions on WhatsApp</a>
+  </div>
+</main>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+// >>> PASTE YOUR FIREBASE CONFIG HERE (Project settings > Your apps > Web app) <<<
+const firebaseConfig={apiKey:"AIzaSyD_kspTZ3AL_EnjgtkFneqMCXw5oIgVBsk",authDomain:"unical-universe.firebaseapp.com",projectId:"unical-universe",storageBucket:"unical-universe.firebasestorage.app",messagingSenderId:"1087706058736",appId:"1:1087706058736:web:f67107cd06c7ed8e085735"};
+// >>> PASTE YOUR PAYSTACK PUBLIC KEY HERE (starts with pk_test_ or pk_live_) <<<
+const PAYSTACK_KEY="YOUR_PAYSTACK_PUBLIC_KEY";
+const FACS=["All Faculties","Administration","Agriculture","Arts","Basic Medical Sciences","Clinical Sciences","Dentistry","Education","Engineering","Environmental Sciences","Law","Management Sciences","Pharmacy","Science","Social Sciences","General Studies (GST/GSS)"];
+const DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const PHONE="2349116994091";
+const SAMPLE=[
+ {code:"POS 111",title:"Introduction to Political Science",faculty:"Social Sciences",day:"Monday",start:"08:00",end:"10:00",venue:"New Arts Theatre Block",by:"Sample"},
+ {code:"LAW 211",title:"Nigerian Legal System I",faculty:"Law",day:"Monday",start:"10:00",end:"12:00",venue:"Faculty of Law Lecture Theatre",by:"Sample"},
+ {code:"GSS 101",title:"Use of English & Communication",faculty:"General Studies (GST/GSS)",day:"Monday",start:"12:00",end:"14:00",venue:"Unical Pavilion Hall",by:"Sample"}];
+const $=id=>document.getElementById(id);
+let lectures=SAMPLE.map((l,i)=>({...l,id:"s"+i})),col=null,canWrite=false,editId=null,live=false;
+
+function fill(sel,arr,skipAll){sel.textContent="";arr.forEach((v,i)=>{if(skipAll&&i===0)return;const o=document.createElement("option");o.value=v;o.textContent=v;sel.appendChild(o)})}
+fill($("fac"),FACS);fill($("day"),DAYS);fill($("f-fac"),FACS,true);fill($("f-day"),DAYS);
+$("day").value=DAYS[new Date().getDay()];$("f-day").value=$("day").value;
+$("wa").href="https://wa.me/"+PHONE+"?text="+encodeURIComponent("Hello, I'd like to buy UNICAL past questions.");
+
+function t12(t){if(!t)return"";const[h,m]=t.split(":").map(Number);return((h%12)||12)+":"+String(m).padStart(2,"0")+(h<12?" AM":" PM")}
+function el(tag,txt,cls){const e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e}
+
+function render(){
+  const fac=$("fac").value,day=$("day").value;
+  $("lt").textContent="Lectures · "+day;
+  $("src").textContent=live?"Live timetable":"Showing sample timetable (Firebase not connected).";
+  const rows=lectures.filter(l=>l.day===day&&(fac===FACS[0]||l.faculty===fac)).sort((a,b)=>(a.start||"").localeCompare(b.start||""));
+  const box=$("list");box.textContent="";
+  if(!rows.length){box.appendChild(el("div","No lectures posted for this day and faculty.","empty"));return}
+  rows.forEach(l=>{
+    const d=el("div",null,"lec"),h=el("h4");
+    h.appendChild(el("span",l.faculty,"tag"));h.appendChild(document.createTextNode(l.code+": "+l.title));
+    d.appendChild(h);
+    d.appendChild(el("p","🕒 "+t12(l.start)+" – "+t12(l.end)+"  ·  📍 "+l.venue));
+    if(l.by)d.appendChild(el("p","Posted by "+l.by));
+    if(canWrite&&live){
+      const e=el("button","Edit","sm"),x=el("button","Delete","sm del");
+      e.onclick=()=>edit(l);x.onclick=async()=>{if(confirm("Delete "+l.code+"?"))try{await col.doc(l.id).delete()}catch(err){alert("Could not delete.")}};
+      d.appendChild(e);d.appendChild(x);
+    }
+    box.appendChild(d);
+  });
+}
+function edit(l){editId=l.id;$("f-code").value=l.code;$("f-title").value=l.title;$("f-fac").value=l.faculty;$("f-day").value=l.day;$("f-start").value=l.start;$("f-end").value=l.end;$("f-venue").value=l.venue;$("f-by").value=l.by||"";$("cancel").classList.remove("hidden");$("admin").scrollIntoView()}
+function clearForm(){editId=null;["f-code","f-title","f-start","f-end","f-venue"].forEach(i=>$(i).value="");$("cancel").classList.add("hidden")}
+$("cancel").onclick=clearForm;
+$("save").onclick=async()=>{
+  const d={code:$("f-code").value.trim(),title:$("f-title").value.trim(),faculty:$("f-fac").value,day:$("f-day").value,start:$("f-start").value,end:$("f-end").value,venue:$("f-venue").value.trim(),by:$("f-by").value.trim()};
+  if(!d.code||!d.title||!d.start||!d.venue){alert("Fill in code, title, start time and venue.");return}
+  try{editId?await col.doc(editId).set(d):await col.add(d);clearForm()}catch(e){alert("You don't have permission to edit the timetable.")}
+};
+$("fac").onchange=$("day").onchange=render;
+render();
+
+let auth=null,fs=null;
+if(firebaseConfig.apiKey!=="YOUR_API_KEY"&&window.firebase){
+  firebase.initializeApp(firebaseConfig);auth=firebase.auth();fs=firebase.firestore();col=fs.collection("lectures");
+  col.onSnapshot(s=>{live=true;lectures=s.docs.map(x=>({id:x.id,...x.data()}));render()},()=>{live=false;render()});
+  const safeUrl=u=>{try{const x=new URL(u);return(x.protocol==="https:"||x.protocol==="http:")?x.href:null}catch(e){return null}};
+  fs.collection("sponsors").onSnapshot(q=>{
+    const box=$("sponsList");box.textContent="";
+    const rows=q.docs.map(d=>d.data()).filter(x=>x.active!==false);
+    $("spons").classList.toggle("hidden",!rows.length);
+    rows.forEach(x=>{const u=safeUrl(x.link);const a=el(u?"a":"div",null,"spon");
+      if(u){a.href=u;a.target="_blank";a.rel="noopener sponsored"}
+      a.appendChild(el("b",x.name||""));a.appendChild(el("span",x.text||""));box.appendChild(a)});
+  },()=>{});
+  fs.collection("products").onSnapshot(q=>{
+    const box=$("pqList");box.textContent="";
+    q.docs.forEach(d=>{const p=d.data();const row=el("div",null,"lec");
+      row.appendChild(el("h4",p.title||""));if(p.desc)row.appendChild(el("p",p.desc));
+      const b=el("button","Pay ₦"+Number(p.price||0).toLocaleString()+" with Paystack","sm");
+      b.onclick=()=>pay(p,d.id);row.appendChild(b);box.appendChild(row)});
+  },()=>{});
+  function pay(p,id){
+    const email=(auth.currentUser&&auth.currentUser.email)||prompt("Enter your email for the receipt:");
+    if(!email)return;
+    const wa=t=>"https://wa.me/"+PHONE+"?text="+encodeURIComponent(t);
+    if(PAYSTACK_KEY.indexOf("YOUR_")===0||!window.PaystackPop){window.open(wa("Hello, I'd like to buy: "+p.title),"_blank");return}
+    PaystackPop.setup({key:PAYSTACK_KEY,email:email,amount:Math.round(Number(p.price)*100),currency:"NGN",ref:"UV"+Date.now(),
+      metadata:{product:p.title,product_id:id},
+      callback:function(r){
+        const m=$("payMsg");m.textContent="✅ Payment received. Reference: "+r.reference+". ";
+        const a=el("a","Tap here to send your receipt on WhatsApp and get your file.");
+        a.href=wa("Paid for "+p.title+". Paystack reference: "+r.reference+". Email: "+email);a.target="_blank";a.rel="noopener";
+        m.appendChild(a);m.scrollIntoView();
+      },onClose:function(){}}).openIframe();
+  }
+  auth.onAuthStateChanged(async u=>{
+    canWrite=false;$("loggedOut").classList.toggle("hidden",!!u);$("loggedIn").classList.toggle("hidden",!u);
+    $("admin").classList.add("hidden");$("pending").classList.add("hidden");
+    if(u){
+      $("who").textContent="Signed in as "+u.email;
+      try{const d=await fs.collection("staff").doc(u.uid).get();canWrite=d.exists}catch(e){}
+      if(canWrite)$("admin").classList.remove("hidden");
+      else{$("pending").textContent="Awaiting admin approval. Send this ID to the admin: "+u.uid;$("pending").classList.remove("hidden")}
+    }
+    render();
+  });
+  const go=fn=>async()=>{try{await fn($("em").value.trim(),$("pw").value)}catch(e){alert(e.message)}};
+  $("login").onclick=go((e,p)=>auth.signInWithEmailAndPassword(e,p));
+  $("signup").onclick=go((e,p)=>auth.createUserWithEmailAndPassword(e,p));
+  $("logout").onclick=()=>auth.signOut();
+}else{
+  $("loggedOut").textContent="Add your Firebase config at the top of the script to turn on login and live updates.";
+}
+</script>
+</body>
+</html>
