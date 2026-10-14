@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UniVerse - UNICAL Student Portal</title>
+<style>
+:root{--primary:#0A192F;--gold:#F5C518;--bg:#F4F6F9;--card:#fff;--text:#222;--light:#666;--line:#e5e7eb;--ok:#25D366;--bad:#DC2626;--item:#F9FAFB;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--card:#131c2e;--text:#e8ecf3;--light:#9aa6b8;--line:#243049;--item:#18233a}}
+:root[data-theme="dark"]{--bg:#0b1220;--card:#131c2e;--text:#e8ecf3;--light:#9aa6b8;--line:#243049;--item:#18233a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Verdana,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100%}
+header{background:var(--primary);color:#fff;padding:1rem;display:flex;flex-direction:column;gap:.7rem}
+header h1{color:var(--gold);font-size:1.4rem}
+.filters{display:flex;gap:.5rem;flex-wrap:wrap}
+select,input{padding:.6rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;background:var(--card);color:var(--text);width:100%}
+.filters select{width:auto;flex:1;min-width:140px}
+main{max-width:800px;margin:1rem auto;padding:0 1rem}
+.card{background:var(--card);padding:1.1rem;border-radius:8px;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card h2{font-size:1.1rem;margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:2px solid var(--line)}
+.lec{background:var(--item);border-left:4px solid var(--gold);padding:.8rem;margin-bottom:.7rem;border-radius:0 6px 6px 0}
+.lec h4{font-size:1rem}.lec p{font-size:.88rem;color:var(--light);margin-top:.2rem}
+.tag{font-size:.72rem;background:var(--primary);color:var(--gold);padding:.1rem .45rem;border-radius:4px;margin-right:.4rem}
+button{background:var(--primary);color:#fff;border:0;padding:.65rem 1rem;border-radius:6px;font-weight:bold;cursor:pointer;font-size:.95rem}
+button.sm{padding:.3rem .6rem;font-size:.8rem;margin:.5rem .4rem 0 0}button.del{background:var(--bad)}
+.grid{display:grid;gap:.6rem}.row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.wa{display:block;background:var(--ok);color:#fff;text-decoration:none;text-align:center;padding:.8rem;border-radius:6px;font-weight:bold;margin-top:.8rem}
+.note{font-size:.82rem;color:var(--light)}.empty{color:var(--light);text-align:center;padding:1rem}
+.hidden{display:none}
+.price{display:inline-block;background:var(--gold);color:#000;font-weight:bold;padding:.2rem .7rem;border-radius:999px;font-size:.9rem;margin:.4rem .5rem 0 0}.cover{width:100%;max-height:240px;object-fit:contain;background:#000;border-radius:6px;margin-bottom:.4rem}
+.rx{margin-top:.4rem}.rb{background:var(--card);color:var(--text);border:1px solid var(--line)}.rb.on{background:var(--primary);color:var(--gold)}.cm{font-size:.88rem;margin-top:.4rem;color:var(--text)}.sbox{margin-top:.6rem;display:grid;gap:.5rem}
+.mlink{display:inline-block;background:var(--primary);color:var(--gold);padding:.45rem .8rem;border-radius:6px;text-decoration:none;font-weight:bold;font-size:.85rem;margin:.5rem .4rem 0 0}
+.mbody{white-space:pre-wrap;color:var(--text);margin-top:.4rem;font-size:.92rem}summary{cursor:pointer;margin-top:.4rem;font-size:.9rem;color:var(--light)}
+textarea{padding:.6rem;border:1px solid var(--line);border-radius:6px;font-size:1rem;background:var(--card);color:var(--text);width:100%;min-height:110px;resize:vertical}
+.spon{display:flex;flex-direction:column;gap:.2rem;background:var(--item);border:1px dashed var(--gold);padding:.7rem;border-radius:6px;margin-bottom:.6rem;color:var(--text);text-decoration:none}
+.spon span{font-size:.85rem;color:var(--light)}.spon img{width:100%;max-height:360px;object-fit:contain;border-radius:6px;background:#000;margin-bottom:.4rem}.spon .sd{color:var(--text);margin-top:.2rem}.spon-h{font-size:.7rem;color:var(--light);margin-bottom:.4rem}
+/* Action buttons: white with black text so they stand out */
+button{background:#fff!important;color:#000!important;border:2px solid #0A192F!important;box-shadow:0 1px 3px rgba(0,0,0,.3);min-height:40px}
+button:hover,button:active{background:#ececec!important}
+button.del{color:#b91c1c!important;border-color:#b91c1c!important}
+button.rb.on{background:var(--gold)!important}
+.mlink{background:#fff!important;color:#000!important;border:2px solid #0A192F;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏛️ UniVerse · UNICAL</h1>
+  <div class="filters">
+    <select id="fac" aria-label="Faculty"></select>
+    <select id="day" aria-label="Day"></select>
+    <select id="lvl" aria-label="Level"></select>
+    <select id="dpt" aria-label="Department"></select>
+  </div>
+</header>
+<main>
+  <div class="card hidden" id="spons">
+    <p class="spon-h">SPONSORED</p>
+    <div id="sponsList"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="lt">Lectures</h2>
+    <p class="note" id="src"></p>
+    <div id="list"></div>
+  </div>
+
+  <div class="card" id="mats">
+    <h2>📖 Textbooks &amp; Class Notes</h2>
+    <p class="note">Posted by lecturers. Follows the faculty and level filters at the top.</p>
+    <select id="mt" aria-label="Type" style="margin-top:.5rem"><option value="all">All materials</option><option value="book">Textbooks</option><option value="note">Class notes (missed lectures)</option></select>
+    <div id="mlist" style="margin-top:.7rem"></div>
+  </div>
+
+  <div class="card" id="asg">
+    <h2>📌 Assignments</h2>
+    <p class="note" id="amsg"></p>
+    <div id="alist"></div>
+  </div>
+
+  <div class="card hidden" id="myres">
+    <h2>📊 My Results &amp; GPA</h2>
+    <p class="note">Only you can see this page of results. Tips are worked out from your own results; talk to your course adviser for a personal plan.</p>
+    <div id="mygpa" style="margin-top:.5rem"></div>
+    <div id="mytips" style="margin-top:.6rem"></div>
+    <h4 style="margin:1rem 0 .4rem">My results</h4>
+    <div id="myresl"></div>
+  </div>
+
+  <div class="card" id="auth">
+    <h2>🔐 Login / Create Account</h2>
+    <div id="loggedOut" class="grid">
+      <input id="em" type="email" placeholder="Email" autocomplete="email">
+      <input id="pw" type="password" placeholder="Password (min 6 characters)" autocomplete="current-password">
+      <div class="row"><button id="login">Log in</button><button id="signup" style="background:var(--light)">Create account</button></div>
+      <p class="note">Students: create an account, then choose "I'm a student". Lecturers and course reps need admin approval before they can post.</p>
+    </div>
+    <div id="loggedIn" class="hidden grid">
+      <p id="who" class="note"></p>
+      <p id="pending" class="note hidden"></p>
+      <button id="logout" style="background:var(--light)">Log out</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="prof">
+    <h2>👤 Finish setting up your account</h2>
+    <div class="grid">
+      <select id="pr-role"><option value="student">I'm a student</option><option value="staff">I'm a lecturer / course rep</option></select>
+      <input id="pr-name" placeholder="Full name">
+      <div id="pr-st" class="grid">
+        <input id="pr-mat" placeholder="Matric number (optional)">
+        <select id="pr-fac"></select>
+        <input id="pr-dpt" list="deptlist" placeholder="Your department">
+        <select id="pr-lvl"></select>
+      </div>
+      <button id="pr-save">Save</button>
+      <p class="note">Lecturers and course reps are approved by the admin before they can post.</p>
+    </div>
+  </div>
+
+  <div class="card hidden" id="aform">
+    <h2>📌 Post Assignment</h2>
+    <div class="grid">
+      <div class="row"><input id="a-code" placeholder="Course code"><select id="a-fac"></select></div>
+      <div class="row"><input id="a-dpt" list="deptlist" placeholder="Department (empty = all)"><select id="a-lvl"></select></div>
+      <input id="a-title" placeholder="Assignment title">
+      <textarea id="a-desc" placeholder="Instructions / questions"></textarea>
+      <input id="a-link" placeholder="Link to assignment file (Google Drive), optional">
+      <p class="note">Deadline (optional)</p>
+      <input id="a-due" type="datetime-local">
+      <input id="a-by" placeholder="Your name / role">
+      <button id="a-save">Post assignment</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="admin">
+    <h2>✏️ Course Rep / Lecturer Panel</h2>
+    <div class="grid">
+      <input id="f-code" placeholder="Course code (e.g. LAW 211)">
+      <input id="f-title" placeholder="Course title">
+      <div class="row"><select id="f-fac"></select><select id="f-day"></select></div>
+      <select id="f-lvl" aria-label="Level"></select>
+      <input id="f-dpt" list="deptlist" placeholder="Department (empty = all departments)">
+      <p class="note">One-off or make-up lecture? Pick its date and it is deleted automatically after it ends. Leave empty for your normal weekly timetable.</p>
+      <input id="f-date" type="date">
+      <div class="row"><input id="f-start" type="time"><input id="f-end" type="time"></div>
+      <input id="f-venue" placeholder="Venue">
+      <input id="f-by" placeholder="Posted by (name / role)">
+      <button id="save">Save lecture</button>
+      <button id="cancel" class="hidden" style="background:var(--light)">Cancel edit</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="madmin">
+    <h2>📤 Post Textbook / Class Note</h2>
+    <div class="grid">
+      <select id="m-type"><option value="book">Textbook</option><option value="note">Brief lecture / class note (missed class)</option></select>
+      <div class="row"><input id="m-code" placeholder="Course code"><select id="m-fac"></select></div>
+      <select id="m-lvl" aria-label="Level"></select>
+      <input id="m-dpt" list="deptlist" placeholder="Department (empty = all departments)">
+      <input id="m-title" placeholder="Title (e.g. Intro to Political Science, 3rd ed.)">
+      <input id="m-link" placeholder="Share link (Google Drive / Dropbox) or recording link">
+      <textarea id="m-body" placeholder="For a missed class: type the brief lecture or summary here (optional for textbooks)"></textarea>
+      <input id="m-by" placeholder="Your name / role">
+      <button id="m-save">Post</button>
+      <p class="note">Upload your file to Google Drive, tap Share, set "Anyone with the link", then paste the link above. Only share material you own or have permission to share.</p>
+    </div>
+  </div>
+
+  <div class="card hidden" id="rform">
+    <h2>📊 Upload Results / GPA</h2>
+    <div class="grid">
+      <select id="r-mode"><option value="res">Assessment or assignment result</option><option value="gpa">Student GPA</option></select>
+      <div class="row"><select id="r-fac" aria-label="Faculty"></select><select id="r-lvl" aria-label="Level"></select></div>
+      <input id="r-dpt" list="deptlist" placeholder="Department (empty = whole faculty)">
+      <div id="r-resf" class="grid">
+        <div class="row"><input id="r-code" placeholder="Course code"><input id="r-title" placeholder="Assessment (CA 1, Test, Exam)"></div>
+        <div class="row"><input id="r-max" type="number" inputmode="decimal" placeholder="Maximum score, e.g. 20"><input id="r-pass" type="number" inputmode="decimal" placeholder="Pass mark %, default 40"></div>
+      </div>
+      <input id="r-term" class="hidden" placeholder="Term (e.g. 2025/2026 First Semester)">
+      <button id="r-load">Load students</button>
+      <div id="r-roster"></div>
+      <button id="r-save" class="hidden">Save</button>
+      <p class="note">Each student sees only their own result and GPA. Pass or fail is worked out from the pass mark. Only lecturers can upload.</p>
+    </div>
+    <h4 style="margin:1rem 0 .4rem">Results I uploaded</h4>
+    <div id="r-sets"></div>
+  </div>
+
+  <div class="card hidden" id="bform">
+    <h2>📖 List a Textbook for Sale</h2>
+    <div class="grid">
+      <input id="b-title" placeholder="Book title and author">
+      <input id="b-desc" placeholder="Edition / condition (e.g. 3rd edition, like new)">
+      <div class="row"><select id="b-fac" aria-label="Faculty"></select><select id="b-lvl" aria-label="Level"></select></div>
+      <input id="b-dpt" list="deptlist" placeholder="Department (empty = all departments)">
+      <input id="b-price" type="number" inputmode="numeric" placeholder="Price tag in naira, e.g. 3500">
+      <input id="b-seller" placeholder="Seller name">
+      <input id="b-phone" type="tel" placeholder="Your WhatsApp number, e.g. 08012345678">
+      <input id="b-img" type="file" accept="image/*">
+      <button id="b-save">List book</button>
+      <p class="note">Students contact you directly on WhatsApp and you handle payment and handover yourself. Your number is shown on the listing. Use "Remove listing" on the card when the book is sold.</p>
+    </div>
+  </div>
+
+  <div class="card hidden" id="aadmin">
+    <h2>👥 Approve Staff</h2>
+    <h4 style="margin:.4rem 0">Waiting for approval</h4>
+    <div id="pend-list"></div>
+    <h4 style="margin:1rem 0 .4rem">Approved staff</h4>
+    <div id="staff-list"></div>
+  </div>
+
+  <div class="card hidden" id="studs">
+    <h2>🎓 Registered Students <span id="st-n"></span></h2>
+    <input id="st-q" placeholder="Search name, matric, department, faculty or level">
+    <div id="st-list" style="margin-top:.6rem"></div>
+  </div>
+
+  <div class="card hidden" id="stest">
+    <h2>🧪 Student view</h2>
+    <p class="note">Your admin account has no student profile, so you can't see the student submit box. Create one to test assignments, comments and reactions as a student.</p>
+    <button id="st-btn" style="margin-top:.6rem">Create my student profile</button>
+  </div>
+
+  <div class="card hidden" id="sadmin">
+    <h2>🛠️ Admin: Sponsors &amp; Products</h2>
+    <p class="note">Only accounts with role "admin" see this.</p>
+    <h4 style="margin:.6rem 0">Add a sponsor</h4>
+    <div class="grid">
+      <input id="s-name" placeholder="Sponsor name">
+      <input id="s-text" placeholder="Headline (e.g. Cheap printing near Gate 2)">
+      <input id="s-desc" placeholder="Description (optional)">
+      <input id="s-link" placeholder="Link, e.g. https://wa.me/234... (optional)">
+      <input id="s-img" type="file" accept="image/*">
+      <button id="s-save">Post sponsor</button>
+      <div id="s-list"></div>
+    </div>
+    <h4 style="margin:1rem 0 .6rem">Add a past question pack or textbook for sale</h4>
+    <div class="grid">
+      <select id="p-kind"><option value="pastq">Past question pack</option><option value="book">Textbook for sale</option></select>
+      <input id="p-title" placeholder="Title (e.g. GSS 101 Past Questions, or the book title and author)">
+      <input id="p-desc" placeholder="Description (optional)">
+      <input id="p-price" type="number" inputmode="numeric" placeholder="Price in naira, e.g. 1000">
+      <input id="p-img" type="file" accept="image/*">
+      <button id="p-save">Add product</button>
+      <div id="p-list"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📚 Past Questions</h2>
+    <p class="note">Student-run service. Tap below to chat on WhatsApp about available past questions and payment. Confirm what you're buying before you pay.</p>
+    <h4 style="margin:.8rem 0 .4rem">Past question packs</h4>
+    <div id="pqList"></div>
+    <h4 style="margin:1.2rem 0 .2rem">📖 Textbooks for Sale</h4>
+    <p class="note">Prices are in naira. Books from UniVerse can be paid online. Books listed by a lecturer or course rep are sold directly by that seller: chat with them on WhatsApp, meet in a safe public place, and check the book before you pay.</p>
+    <div id="bkList"></div>
+    <p id="payMsg" class="note"></p>
+    <a class="wa" id="wa" target="_blank" rel="noopener">💬 Buy Past Questions on WhatsApp</a>
+  </div>
+</main>
+
+<datalist id="deptlist"></datalist>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+// >>> PASTE YOUR FIREBASE CONFIG HERE (Project settings > Your apps > Web app) <<<
+const firebaseConfig={apiKey:"AIzaSyD_kspTZ3AL_EnjgtkFneqMCXw5oIgVBsk",authDomain:"unical-universe.firebaseapp.com",projectId:"unical-universe",storageBucket:"unical-universe.firebasestorage.app",messagingSenderId:"1087706058736",appId:"1:1087706058736:web:f67107cd06c7ed8e085735"};
+// >>> PASTE YOUR PAYSTACK PUBLIC KEY HERE (starts with pk_test_ or pk_live_) <<<
+const PAYSTACK_KEY="YOUR_PAYSTACK_PUBLIC_KEY";
+const FACS=["All Faculties","Administration","Agriculture","Arts","Basic Medical Sciences","Clinical Sciences","Dentistry","Education","Engineering","Environmental Sciences","Law","Management Sciences","Pharmacy","Science","Social Sciences","General Studies (GST/GSS)"];
+const LEVELS=["All Levels","100 Level","200 Level","300 Level","400 Level","500 Level","600 Level"];
+const ASG_GRACE=3,COMMENT_DAYS=30; // days kept after an assignment deadline / after a comment is posted
+const TS=ms=>firebase.firestore.Timestamp.fromMillis(ms);
+const tms=t=>t&&t.toMillis?t.toMillis():(Number(t)||0);
+const gone=x=>{const t=tms(x.expireAt);return !!t&&t<Date.now()};
+const DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const PHONE="2349116994091";
+const SAMPLE=[
+ {code:"POS 111",title:"Introduction to Political Science",faculty:"Social Sciences",day:"Monday",start:"08:00",end:"10:00",venue:"New Arts Theatre Block",by:"Sample"},
+ {code:"LAW 211",title:"Nigerian Legal System I",faculty:"Law",day:"Monday",start:"10:00",end:"12:00",venue:"Faculty of Law Lecture Theatre",by:"Sample"},
+ {code:"GSS 101",title:"Use of English & Communication",faculty:"General Studies (GST/GSS)",day:"Monday",start:"12:00",end:"14:00",venue:"Unical Pavilion Hall",by:"Sample"}];
+const $=id=>document.getElementById(id);
+let lectures=SAMPLE.map((l,i)=>({...l,id:"s"+i})),col=null,canWrite=false,editId=null,live=false;
+let mats=[],asg=[],me={profile:null};
+
+function fill(sel,arr,skipAll){sel.textContent="";arr.forEach((v,i)=>{if(skipAll&&i===0)return;const o=document.createElement("option");o.value=v;o.textContent=v;sel.appendChild(o)})}
+fill($("fac"),FACS);fill($("day"),DAYS);fill($("f-fac"),FACS,true);fill($("f-day"),DAYS);fill($("lvl"),LEVELS);fill($("f-lvl"),LEVELS);fill($("m-lvl"),LEVELS);
+const lvlOk=v=>{const sel=$("lvl").value;return sel===LEVELS[0]||!v||v===LEVELS[0]||v===sel};
+const dOk=v=>{const sel=$("dpt").value;return sel==="All Departments"||!v||v.trim().toLowerCase()===sel.toLowerCase()};
+fill($("a-fac"),FACS,true);fill($("a-lvl"),LEVELS);fill($("pr-fac"),FACS,true);fill($("pr-lvl"),LEVELS,true);
+function refreshDepts(){
+  const fac=$("fac").value,dd=$("dpt"),cur=dd.value,seen={},list=[];
+  const add=(d,f)=>{if(!d)return;if(fac!==FACS[0]&&f!==fac)return;const k=d.trim().toLowerCase();if(!seen[k]){seen[k]=1;list.push(d.trim())}};
+  lectures.concat(mats,asg).forEach(x=>add(x.dept,x.faculty));
+  if(me.profile)add(me.profile.dept,me.profile.faculty);
+  list.sort();const sig=list.join("\u0001");if(dd.dataset.sig===sig)return;dd.dataset.sig=sig;dd.textContent="";
+  ["All Departments"].concat(list).forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;dd.appendChild(o)});
+  dd.value=[].some.call(dd.options,o=>o.value===cur)?cur:"All Departments";
+  const dl=$("deptlist");dl.textContent="";list.forEach(v=>{const o=document.createElement("option");o.value=v;dl.appendChild(o)});
+}
+try{const sf=localStorage.getItem("uv_fac"),sl=localStorage.getItem("uv_lvl");if(sf&&FACS.includes(sf))$("fac").value=sf;if(sl&&LEVELS.includes(sl))$("lvl").value=sl}catch(e){}
+$("day").value=DAYS[new Date().getDay()];$("f-day").value=$("day").value;
+$("wa").href="https://wa.me/"+PHONE+"?text="+encodeURIComponent("Hello, I'd like to buy UNICAL past questions.");
+
+function t12(t){if(!t)return"";const[h,m]=t.split(":").map(Number);return((h%12)||12)+":"+String(m).padStart(2,"0")+(h<12?" AM":" PM")}
+function el(tag,txt,cls){const e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e}
+
+function render(){
+  refreshDepts();
+  const fac=$("fac").value,day=$("day").value;
+  $("lt").textContent="Lectures · "+day;
+  $("src").textContent=live?"Live timetable":"Showing sample timetable (Firebase not connected).";
+  const rows=lectures.filter(l=>l.day===day&&(fac===FACS[0]||l.faculty===fac)&&lvlOk(l.level)&&dOk(l.dept)&&!gone(l)).sort((a,b)=>(a.start||"").localeCompare(b.start||""));
+  const box=$("list");box.textContent="";
+  if(!rows.length){box.appendChild(el("div","No lectures posted for this day, faculty and level.","empty"));return}
+  rows.forEach(l=>{
+    const d=el("div",null,"lec"),h=el("h4");
+    h.appendChild(el("span",l.faculty,"tag"));if(l.level&&l.level!==LEVELS[0])h.appendChild(el("span",l.level.replace(" Level","L"),"tag"));if(l.dept)h.appendChild(el("span",l.dept,"tag"));h.appendChild(document.createTextNode(l.code+": "+l.title));
+    d.appendChild(h);
+    d.appendChild(el("p",(l.date?"📅 "+l.date+"  ·  ":"")+"🕒 "+t12(l.start)+" – "+t12(l.end)+"  ·  📍 "+l.venue));
+    if(l.by)d.appendChild(el("p","Posted by "+l.by));
+    if(canWrite&&live){
+      const e=el("button","Edit","sm"),x=el("button","Delete","sm del");
+      e.onclick=()=>edit(l);x.onclick=async()=>{if(confirm("Delete "+l.code+"?"))try{await col.doc(l.id).delete()}catch(err){alert("Could not delete.")}};
+      d.appendChild(e);d.appendChild(x);
+    }
+    box.appendChild(d);
+  });
+}
+function edit(l){editId=l.id;$("f-code").value=l.code;$("f-title").value=l.title;$("f-fac").value=l.faculty;$("f-lvl").value=l.level||LEVELS[0];$("f-dpt").value=l.dept||"";$("f-date").value=l.date||"";$("f-day").value=l.day;$("f-start").value=l.start;$("f-end").value=l.end;$("f-venue").value=l.venue;$("f-by").value=l.by||"";$("cancel").classList.remove("hidden");$("admin").scrollIntoView()}
+function clearForm(){editId=null;["f-code","f-title","f-start","f-end","f-venue","f-date"].forEach(i=>$(i).value="");$("cancel").classList.add("hidden")}
+$("cancel").onclick=clearForm;
+$("save").onclick=async()=>{
+  const d={code:$("f-code").value.trim(),title:$("f-title").value.trim(),faculty:$("f-fac").value,level:$("f-lvl").value,dept:$("f-dpt").value.trim(),day:$("f-day").value,start:$("f-start").value,end:$("f-end").value,venue:$("f-venue").value.trim(),by:$("f-by").value.trim()};
+  if(!d.code||!d.title||!d.start||!d.venue){alert("Fill in code, title, start time and venue.");return}
+  const dt=$("f-date").value;
+  if(dt){d.date=dt;d.day=DAYS[new Date(dt+"T00:00").getDay()];const en=new Date(dt+"T"+(d.end||d.start||"23:59"));if(isNaN(en)){alert("Check the date and time.");return}d.expireAt=TS(en.getTime())}
+  try{editId?await col.doc(editId).set(d):await col.add(d);clearForm()}catch(e){alert("You don't have permission to edit the timetable.")}
+};
+$("fac").onchange=$("day").onchange=$("lvl").onchange=$("dpt").onchange=render;
+$("fac").addEventListener("change",()=>{try{localStorage.setItem("uv_fac",$("fac").value)}catch(e){}});
+$("lvl").addEventListener("change",()=>{try{localStorage.setItem("uv_lvl",$("lvl").value)}catch(e){}});
+render();
+
+let auth=null,fs=null;
+if(firebaseConfig.apiKey!=="YOUR_API_KEY"&&window.firebase){
+  firebase.initializeApp(firebaseConfig);auth=firebase.auth();fs=firebase.firestore();col=fs.collection("lectures");
+  col.onSnapshot(s=>{live=true;lectures=s.docs.map(x=>({id:x.id,...x.data()}));render()},()=>{live=false;render()});
+  const safeUrl=u=>{try{const x=new URL(u);return(x.protocol==="https:"||x.protocol==="http:")?x.href:null}catch(e){return null}};
+  const safeImg=u=>{if(!u||typeof u!=="string")return null;if(/^https?:\/\//i.test(u))return safeUrl(u);return/^[\w\-.]+\.(jpe?g|png|webp|gif)$/i.test(u)?u:null};
+  fs.collection("sponsors").onSnapshot(q=>{
+    const box=$("sponsList");box.textContent="";
+    const rows=q.docs.map(d=>d.data()).filter(x=>x.active!==false);
+    $("spons").classList.toggle("hidden",!rows.length);
+    rows.forEach(x=>{const u=safeUrl(x.link);const a=el(u?"a":"div",null,"spon");
+      if(u){a.href=u;a.target="_blank";a.rel="noopener sponsored"}
+      const im=(typeof x.imageData==="string"&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(x.imageData))?x.imageData:safeImg(x.image);
+      if(im){const g=document.createElement("img");g.src=im;g.alt=x.name||"Sponsor flier";g.loading="lazy";
+        if(!u&&im.indexOf("data:")!==0){g.style.cursor="zoom-in";g.onclick=()=>window.open(im,"_blank")}a.appendChild(g)}
+      a.appendChild(el("b",x.name||""));
+      if(x.text)a.appendChild(el("span",x.text));
+      if(x.desc)a.appendChild(el("span",x.desc,"sd"));
+      box.appendChild(a)});
+  },()=>{});
+  let prods=[];
+  const normPhone=v=>{let d=(v||"").replace(/\D/g,"");if(d.indexOf("0")===0)d="234"+d.slice(1);return(/^\d{12,13}$/.test(d)&&d.indexOf("234")===0)?d:null};
+  function buyBox(row,p){
+    const mine=myOrders[p.id],box=el("div",null,"sbox");
+    if(mine)box.appendChild(el("p",mine.status==="delivered"?"📦 Delivered. Thank you!":"✅ Purchase reported "+new Date(mine.created).toLocaleString()+". Awaiting delivery.","note"));
+    if(mine&&mine.status==="delivered"){row.appendChild(box);return}
+    const det=document.createElement("details");det.appendChild(el("summary",mine?"Update my proof of purchase":"I've bought this book"));
+    const note=document.createElement("input");note.placeholder="Payment reference, amount paid, delivery location";note.value=mine?(mine.note||""):"";note.style.marginTop=".5rem";
+    const file=document.createElement("input");file.type="file";file.accept="image/*";file.style.marginTop=".5rem";
+    const b=el("button",mine?"Update":"Submit proof of purchase","sm");
+    b.onclick=async()=>{
+      if(!file.files[0]&&!mine){alert("Upload a screenshot or photo of your receipt as proof of purchase.");return}
+      try{
+        const proof=file.files[0]?await compress(file.files[0]):mine.proof;
+        if(!proof||proof.length>800000){alert("The proof image is missing or too large. Choose a smaller one.");return}
+        const pf=me.profile;
+        await fs.collection("orders").doc(p.id+"_"+auth.currentUser.uid).set({bookId:p.id,bookTitle:p.title||"",price:Number(p.price)||0,buyerUid:auth.currentUser.uid,buyerName:pf.name,matric:pf.matric||"",faculty:pf.faculty||"",dept:pf.dept||"",level:pf.level||"",note:note.value.trim().slice(0,300),proof:proof,sellerUid:p.uid||"",status:"awaiting delivery",created:mine?mine.created:Date.now()});
+        alert("Sent ✅ Your purchase is now marked as awaiting delivery.");
+      }catch(e){alert("Could not send: "+e.message)}
+    };
+    det.appendChild(el("p","Upload a screenshot or photo of your receipt or transfer as proof of purchase.","note"));
+    det.appendChild(file);det.appendChild(note);det.appendChild(b);box.appendChild(det);row.appendChild(box);
+  }
+  function ordersView(row,p){
+    const list=(ordersByBook[p.id]||[]).slice().sort((x,y)=>x.created-y.created);
+    const dt=document.createElement("details");dt.appendChild(el("summary","📦 Orders ("+list.length+")"));
+    list.forEach(o=>{
+      const d=el("div",null,"cm");
+      d.appendChild(el("b",(o.buyerName||"")+(o.matric?" ("+o.matric+")":"")+" · "+[o.faculty,o.dept,o.level].filter(Boolean).join(" · ")));
+      d.appendChild(el("p",new Date(o.created).toLocaleString()+" · "+(o.status==="delivered"?"DELIVERED":"AWAITING DELIVERY")));
+      if(o.note)d.appendChild(el("p",o.note,"mbody"));
+      if(/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(o.proof||"")){
+        const g=document.createElement("img");g.src=o.proof;g.alt="Proof of purchase";g.className="cover";g.style.cursor="zoom-in";
+        g.onclick=()=>{g.style.maxHeight=g.style.maxHeight==="none"?"240px":"none"};d.appendChild(g);
+      }
+      if(o.status!=="delivered"){
+        const m=el("button","Mark as delivered","sm");
+        m.onclick=()=>fs.collection("orders").doc(o.id).update({status:"delivered",deliveredAt:Date.now()}).catch(()=>alert("Not allowed."));
+        d.appendChild(m);
+      }
+      dt.appendChild(d);
+    });
+    row.appendChild(dt);
+  }
+  function renderProds(){
+    const pq=$("pqList"),bk=$("bkList"),cu=auth&&auth.currentUser,fac=$("fac").value;pq.textContent="";bk.textContent="";
+    let hidden=0;
+    prods.forEach(p=>{if(p.active===false)return;
+      const book=p.kind==="book",row=el("div",null,"lec"),n="₦"+Number(p.price||0).toLocaleString();
+      if(book&&!((!p.faculty||p.faculty===FACS[0]||fac===FACS[0]||p.faculty===fac)&&lvlOk(p.level)&&dOk(p.dept))){hidden++;return}
+      if(book&&typeof p.imageData==="string"&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(p.imageData)){const g=document.createElement("img");g.src=p.imageData;g.alt=p.title||"Textbook";g.className="cover";g.loading="lazy";row.appendChild(g)}
+      const h=el("h4");
+      if(book){
+        if(p.faculty&&p.faculty!==FACS[0])h.appendChild(el("span",p.faculty,"tag"));
+        if(p.level&&p.level!==LEVELS[0])h.appendChild(el("span",p.level.replace(" Level","L"),"tag"));
+        if(p.dept)h.appendChild(el("span",p.dept,"tag"));
+      }
+      h.appendChild(document.createTextNode((book?"📖 ":"")+(p.title||"")));row.appendChild(h);
+      if(p.desc)row.appendChild(el("p",p.desc));
+      if(!book){const b=el("button","Pay "+n+" with Paystack","sm");b.onclick=()=>pay(p,p.id);row.appendChild(b);pq.appendChild(row);return}
+      row.appendChild(el("span",n,"price"));
+      if(p.seller)row.appendChild(el("span","Seller: "+p.seller,"note"));
+      const sellerPhone=/^\d{12,13}$/.test(p.phone||"")?p.phone:null;
+      if(sellerPhone){
+        const w=el("a","Chat seller on WhatsApp","mlink");w.href="https://wa.me/"+sellerPhone+"?text="+encodeURIComponent("Hello, is this textbook still available? "+(p.title||"")+" ("+n+")");w.target="_blank";w.rel="noopener";row.appendChild(w);
+      }else{
+        const b=el("button","Buy with Paystack","sm");b.onclick=()=>pay(p,p.id);row.appendChild(b);
+        const w=el("a","Ask on WhatsApp","mlink");w.href="https://wa.me/"+PHONE+"?text="+encodeURIComponent("Hello, is this textbook still available? "+(p.title||"")+" ("+n+")");w.target="_blank";w.rel="noopener";row.appendChild(w);
+      }
+      if(!cu)row.appendChild(el("p","Log in as a student to report a purchase and track delivery.","note"));
+      else if(me.profile)buyBox(row,p);
+      if(cu&&canWrite&&((p.uid&&p.uid===cu.uid)||isAdmin))ordersView(row,p);
+      if(p.uid&&cu&&canWrite&&(p.uid===cu.uid||isAdmin)){
+        const x=el("button","Remove listing","sm del");
+        x.onclick=()=>{if(confirm("Remove this listing?"))fs.collection("products").doc(p.id).delete().catch(()=>alert("Not allowed."))};
+        row.appendChild(x);
+      }
+      bk.appendChild(row);
+    });
+    if(!bk.children.length)bk.appendChild(el("div",hidden?"No textbooks for this faculty, department and level.":"No textbooks listed yet.","empty"));
+  }
+  fs.collection("products").onSnapshot(q=>{prods=q.docs.map(x=>({id:x.id,...x.data()}));renderProds()},()=>{});
+  $("b-save").onclick=async()=>{
+    if(!canWrite||!auth.currentUser){alert("Only approved staff can list books.");return}
+    const title=$("b-title").value.trim(),price=Number($("b-price").value),phone=normPhone($("b-phone").value);
+    if(!title||!(price>0)){alert("Enter the book title and a price.");return}
+    if(!phone){alert("Enter a valid WhatsApp number, e.g. 08012345678.");return}
+    const doc={kind:"book",faculty:$("b-fac").value,level:$("b-lvl").value,dept:$("b-dpt").value.trim(),title:title,desc:$("b-desc").value.trim(),price:Math.round(price),seller:$("b-seller").value.trim(),phone:phone,uid:auth.currentUser.uid,created:Date.now()};
+    try{const f=$("b-img").files[0];
+      if(f){doc.imageData=await compress(f);if(doc.imageData.length>800000){alert("That image is too large. Choose a smaller one.");return}}
+      await fs.collection("products").add(doc);
+      ["b-title","b-desc","b-dpt","b-price","b-seller","b-phone","b-img"].forEach(i=>$(i).value="");alert("Book listed ✅");
+    }catch(e){alert("Could not list: "+e.message)}
+  };
+  function pay(p,id){
+    const email=(auth.currentUser&&auth.currentUser.email)||prompt("Enter your email for the receipt:");
+    if(!email)return;
+    const wa=t=>"https://wa.me/"+PHONE+"?text="+encodeURIComponent(t);
+    if(PAYSTACK_KEY.indexOf("YOUR_")===0||!window.PaystackPop){window.open(wa("Hello, I'd like to buy: "+p.title),"_blank");return}
+    PaystackPop.setup({key:PAYSTACK_KEY,email:email,amount:Math.round(Number(p.price)*100),currency:"NGN",ref:"UV"+Date.now(),
+      metadata:{product:p.title,product_id:id},
+      callback:function(r){
+        const m=$("payMsg");m.textContent="✅ Payment received. Reference: "+r.reference+". ";
+        const a=el("a",p.kind==="book"?"Tap here to send your receipt on WhatsApp and arrange pickup or delivery.":"Tap here to send your receipt on WhatsApp and get your file.");
+        a.href=wa("Paid for "+p.title+". Paystack reference: "+r.reference+". Email: "+email);a.target="_blank";a.rel="noopener";
+        m.appendChild(a);m.scrollIntoView();
+      },onClose:function(){}}).openIframe();
+  }
+  let isAdmin=false,adminOn=false,isLect=false;
+  const compress=f=>new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const i=new Image();i.onerror=rej;i.onload=()=>{
+    const k=Math.min(1,900/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);
+    c.getContext("2d").drawImage(i,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",0.72))};i.src=r.result};r.readAsDataURL(f)});
+  function adminList(colName,boxId,label,toggle){
+    fs.collection(colName).onSnapshot(q=>{const b=$(boxId);b.textContent="";
+      q.docs.forEach(doc=>{const x=doc.data();const row=el("div",null,"lec");
+        row.appendChild(el("h4",(x.active===false?"(hidden) ":"")+label(x)));
+        if(toggle){const t=el("button",x.active===false?"Show":"Hide","sm");t.onclick=()=>doc.ref.update({active:x.active===false});row.appendChild(t)}
+        const dl=el("button","Delete","sm del");dl.onclick=()=>{if(confirm("Delete this item?"))doc.ref.delete().catch(()=>alert("Not allowed."))};
+        row.appendChild(dl);b.appendChild(row)});
+    },()=>{});
+  }
+  function startAdmin(){
+    if(adminOn)return;adminOn=true;
+    adminList("sponsors","s-list",x=>x.name||"",true);
+    adminList("products","p-list",x=>(x.kind==="book"?"📖 ":"📚 ")+(x.title||"")+" · ₦"+Number(x.price||0).toLocaleString(),true);
+    $("s-save").onclick=async()=>{
+      const name=$("s-name").value.trim();if(!name){alert("Enter the sponsor name.");return}
+      const d={name:name,text:$("s-text").value.trim(),desc:$("s-desc").value.trim(),link:$("s-link").value.trim(),active:true,created:Date.now()};
+      try{const f=$("s-img").files[0];
+        if(f){d.imageData=await compress(f);if(d.imageData.length>800000){alert("That image is too large. Choose a smaller one.");return}}
+        await fs.collection("sponsors").add(d);
+        ["s-name","s-text","s-desc","s-link"].forEach(i=>$(i).value="");$("s-img").value="";
+      }catch(e){alert("Could not save: "+e.message)}
+    };
+    $("p-save").onclick=async()=>{
+      const title=$("p-title").value.trim(),price=Number($("p-price").value);
+      if(!title||!(price>0)){alert("Enter a title and a price.");return}
+      try{const doc={kind:$("p-kind").value,title:title,desc:$("p-desc").value.trim(),price:Math.round(price),created:Date.now()};const f=$("p-img").files[0];if(f){doc.imageData=await compress(f);if(doc.imageData.length>800000){alert("That image is too large. Choose a smaller one.");return}}await fs.collection("products").add(doc);$("p-img").value="";
+        ["p-title","p-desc","p-price"].forEach(i=>$(i).value="")}catch(e){alert("Could not save: "+e.message)}
+    };
+  }
+  let apOn=false;
+  function startApprovals(){
+    if(apOn)return;apOn=true;
+    fs.collection("pending").onSnapshot(q=>{
+      const b=$("pend-list");b.textContent="";
+      if(!q.docs.length){b.appendChild(el("div","No one is waiting.","empty"));return}
+      q.docs.forEach(doc=>{
+        const x=doc.data(),row=el("div",null,"lec");
+        row.appendChild(el("h4",(x.name?x.name+" · ":"")+(x.email||"(no email)")));
+        row.appendChild(el("p","ID: "+doc.id.slice(0,8)+"…"));
+        const sel=document.createElement("select");sel.style.marginTop=".4rem";
+        [["lecturer","Lecturer"],["course rep","Course rep"]].forEach(p=>{const o=document.createElement("option");o.value=p[0];o.textContent=p[1];sel.appendChild(o)});
+        row.appendChild(sel);
+        const ok=el("button","Approve","sm");
+        ok.onclick=async()=>{const bt=fs.batch();bt.set(fs.collection("staff").doc(doc.id),{role:sel.value,email:x.email||"",name:x.name||"",approved:Date.now()});bt.delete(doc.ref);
+          try{await bt.commit()}catch(e){alert("Could not approve: "+e.message)}};
+        const no=el("button","Reject","sm del");no.onclick=()=>doc.ref.delete().catch(()=>alert("Not allowed."));
+        row.appendChild(ok);row.appendChild(no);b.appendChild(row);
+      });
+    },()=>{});
+    fs.collection("staff").onSnapshot(q=>{
+      const b=$("staff-list");b.textContent="";
+      q.docs.forEach(doc=>{
+        const x=doc.data(),row=el("div",null,"lec");
+        row.appendChild(el("h4",x.email||("ID "+doc.id.slice(0,8)+"…")));
+        row.appendChild(el("p","Role: "+(x.role||"staff")));
+        if(auth.currentUser&&doc.id!==auth.currentUser.uid){
+          const rm=el("button","Remove access","sm del");
+          rm.onclick=()=>{if(confirm("Remove access for "+(x.email||"this person")+"?"))doc.ref.delete().catch(()=>alert("Not allowed."))};
+          row.appendChild(rm);
+        }
+        b.appendChild(row);
+      });
+    },()=>{});
+  }
+  fill($("m-fac"),FACS,true);fill($("r-fac"),FACS,true);fill($("r-lvl"),LEVELS,true);fill($("b-fac"),FACS);fill($("b-lvl"),LEVELS);
+  function renderMats(){
+    const fac=$("fac").value,ty=$("mt").value,box=$("mlist");box.textContent="";
+    const rows=mats.filter(m=>(fac===FACS[0]||m.faculty===fac)&&lvlOk(m.level)&&dOk(m.dept)&&(ty==="all"||m.type===ty)).sort((a,b)=>(b.created||0)-(a.created||0));
+    if(!rows.length){box.appendChild(el("div","Nothing posted yet for this faculty and level.","empty"));return}
+    rows.forEach(m=>{
+      const d=el("div",null,"lec"),h=el("h4");
+      h.appendChild(el("span",m.faculty||"","tag"));if(m.level&&m.level!==LEVELS[0])h.appendChild(el("span",m.level.replace(" Level","L"),"tag"));if(m.dept)h.appendChild(el("span",m.dept,"tag"));
+      h.appendChild(document.createTextNode((m.type==="book"?"📘 ":"📝 ")+(m.code?m.code+": ":"")+(m.title||"")));
+      d.appendChild(h);
+      const meta=[m.by?"Posted by "+m.by:"",m.created?new Date(m.created).toLocaleDateString():""].filter(Boolean).join(" · ");
+      if(meta)d.appendChild(el("p",meta));
+      if(m.body){const dt=document.createElement("details");dt.appendChild(el("summary","Read the note"));dt.appendChild(el("p",m.body,"mbody"));d.appendChild(dt)}
+      const u=safeUrl(m.link);
+      if(u){const a=el("a",m.type==="book"?"Open textbook":"Open recording / file","mlink");a.href=u;a.target="_blank";a.rel="noopener";d.appendChild(a)}
+      if(auth.currentUser&&canWrite&&(m.uid===auth.currentUser.uid||isAdmin)){
+        const x=el("button","Delete","sm del");
+        x.onclick=()=>{if(confirm("Delete this?"))fs.collection("materials").doc(m.id).delete().catch(()=>alert("Not allowed."))};
+        d.appendChild(x);
+      }
+      addSocial(d,m.id);
+      box.appendChild(d);
+    });
+  }
+  fs.collection("materials").onSnapshot(q=>{mats=q.docs.map(x=>({id:x.id,...x.data()}));refreshDepts();renderMats()},()=>{});
+  $("fac").addEventListener("change",renderMats);$("lvl").addEventListener("change",renderMats);$("dpt").addEventListener("change",renderMats);$("mt").addEventListener("change",renderMats);
+  $("m-save").onclick=async()=>{
+    if(!auth.currentUser||!canWrite){alert("Log in as approved staff first.");return}
+    const type=$("m-type").value,title=$("m-title").value.trim(),body=$("m-body").value.trim(),link=$("m-link").value.trim();
+    if(!title){alert("Enter a title.");return}
+    if(link&&!safeUrl(link)){alert("That link should start with https://");return}
+    if(type==="book"&&!link){alert("Paste the textbook's share link.");return}
+    if(type==="note"&&!body&&!link){alert("Type a short note or add a link to a recording.");return}
+    if(body.length>8000){alert("The note is too long (max 8000 characters).");return}
+    try{
+      await fs.collection("materials").add({type:type,code:$("m-code").value.trim(),title:title,faculty:$("m-fac").value,level:$("m-lvl").value,dept:$("m-dpt").value.trim(),link:link,body:body,by:$("m-by").value.trim(),uid:auth.currentUser.uid,created:Date.now()});
+      ["m-code","m-title","m-link","m-body"].forEach(i=>$(i).value="");
+    }catch(e){alert("Could not post: "+e.message)}
+  };
+  const EMO=[["like","👍"],["love","❤️"],["pray","🙏"]];
+  let rxAll={},myRx={},cmts=[],openC=new Set(),draft={},mySubs={},subsByAsg={},unsubs=[],authedUid=null,myOrders={},ordersByBook={},myResults=[],myGpa=[],ownResults=[];
+  const myName=()=>me.profile?me.profile.name:((auth.currentUser.email||"Staff").split("@")[0]+" (staff)");
+  function addSocial(d,id){
+    const bar=el("div",null,"rx");
+    EMO.forEach(p=>{const n=(rxAll[id]||{})[p[0]]||0;
+      const b=el("button",p[1]+" "+n,"sm rb"+(myRx[id]===p[0]?" on":""));
+      b.onclick=async()=>{const u=auth.currentUser;if(!u){alert("Log in to react.");return}
+        const ref=fs.collection("reactions").doc(id+"_"+u.uid);
+        try{if(myRx[id]===p[0])await ref.delete();else await ref.set({itemId:id,uid:u.uid,emoji:p[0]})}catch(x){alert("Could not react: "+x.message)}};
+      bar.appendChild(b)});
+    d.appendChild(bar);
+    const list=cmts.filter(c=>c.itemId===id&&!gone(c)&&(c.created||0)>Date.now()-COMMENT_DAYS*864e5).sort((a,b)=>a.created-b.created);
+    const dt=document.createElement("details");dt.open=openC.has(id);
+    dt.ontoggle=()=>{if(dt.open)openC.add(id);else openC.delete(id)};
+    dt.appendChild(el("summary","💬 Comments ("+list.length+")"));
+    list.forEach(c=>{const p=el("p",null,"cm");p.appendChild(el("b",c.name+": "));p.appendChild(document.createTextNode(c.text));
+      if(auth.currentUser&&(c.uid===auth.currentUser.uid||isAdmin)){const x=el("button","✕","sm del");x.onclick=()=>fs.collection("comments").doc(c.id).delete().catch(()=>{});p.appendChild(x)}
+      dt.appendChild(p)});
+    if(auth.currentUser&&(canWrite||me.profile)){
+      const inp=document.createElement("input");inp.placeholder="Write a comment…";inp.maxLength=500;inp.value=draft[id]||"";inp.oninput=()=>{draft[id]=inp.value};inp.style.marginTop=".5rem";
+      const sb=el("button","Send","sm");
+      sb.onclick=async()=>{const t=inp.value.trim();if(!t)return;
+        try{await fs.collection("comments").add({itemId:id,uid:auth.currentUser.uid,name:myName(),text:t,created:Date.now(),expireAt:TS(Date.now()+COMMENT_DAYS*864e5)});draft[id]="";inp.value=""}catch(x){alert("Could not send: "+x.message)}};
+      dt.appendChild(inp);dt.appendChild(sb);
+    }else dt.appendChild(el("p","Log in to comment.","note"));
+    d.appendChild(dt);
+  }
+  fs.collection("reactions").onSnapshot(q=>{rxAll={};myRx={};
+    q.docs.forEach(x=>{const r=x.data();rxAll[r.itemId]=rxAll[r.itemId]||{};rxAll[r.itemId][r.emoji]=(rxAll[r.itemId][r.emoji]||0)+1;
+      if(auth.currentUser&&r.uid===auth.currentUser.uid)myRx[r.itemId]=r.emoji});renderMats()},()=>{});
+
+  function submitBox(d,a,closed){
+    const mine=mySubs[a.id],box=el("div",null,"sbox");
+    box.appendChild(el("p",mine?"✅ Submitted "+new Date(mine.created).toLocaleString()+(mine.late?" (late)":"")+". You can resubmit below.":"Not submitted yet.","note"));
+    if(mine&&mine.grade){box.appendChild(el("p","🎓 "+mine.grade.toUpperCase()+(mine.score!=null?" · Score "+mine.score:"")+(mine.remark?" · "+mine.remark:""),"mbody"));d.appendChild(box);return}
+    const t=document.createElement("textarea");t.placeholder="Type your answer (optional if you add a link)";
+    t.value=draft["s"+a.id]!==undefined?draft["s"+a.id]:(mine?mine.text:"");t.oninput=()=>{draft["s"+a.id]=t.value};
+    const l=document.createElement("input");l.placeholder="Link to your work (Google Drive), optional";l.value=mine?mine.link:"";
+    const b=el("button",mine?"Resubmit":"Submit","sm");
+    b.onclick=async()=>{const tx=t.value.trim(),lk=l.value.trim();
+      if(!tx&&!lk){alert("Add your answer or a link.");return}
+      if(lk&&!safeUrl(lk)){alert("The link should start with https://");return}
+      if(tx.length>8000){alert("Answer too long (max 8000 characters).");return}
+      try{await fs.collection("submissions").doc(a.id+"_"+auth.currentUser.uid).set({...(a.expireAt?{expireAt:a.expireAt}:{}),assignmentId:a.id,ownerUid:a.uid,studentUid:auth.currentUser.uid,name:me.profile.name,matric:me.profile.matric||"",text:tx,link:lk,late:!!closed,created:Date.now()});alert("Submitted ✅")}catch(e){alert("Could not submit: "+e.message)}};
+    box.appendChild(t);box.appendChild(l);box.appendChild(b);d.appendChild(box);
+  }
+  function subsView(d,a){
+    const list=(subsByAsg[a.id]||[]).slice().sort((x,y)=>x.created-y.created);
+    const dt=document.createElement("details");dt.appendChild(el("summary","📥 Submissions ("+list.length+")"));
+    list.forEach(s=>{const p=el("div",null,"cm");
+      p.appendChild(el("b",s.name+(s.matric?" ("+s.matric+")":"")+(s.late?" · LATE":"")+" · "+new Date(s.created).toLocaleString()));
+      if(s.text)p.appendChild(el("p",s.text,"mbody"));
+      const u=safeUrl(s.link);if(u){const l=el("a","Open link","mlink");l.href=u;l.target="_blank";l.rel="noopener";p.appendChild(l)}
+      if(s.grade)p.appendChild(el("p","🎓 "+s.grade.toUpperCase()+(s.score!=null?" · Score "+s.score:"")+(s.remark?" · "+s.remark:""),"note"));
+      if(isLect&&!s.grade){
+        const sc=document.createElement("input");sc.type="number";sc.step="any";sc.placeholder="Score (optional)";sc.style.marginTop=".4rem";
+        const rm=document.createElement("input");rm.placeholder="Remark (optional)";rm.maxLength=200;rm.style.marginTop=".4rem";
+        const go=g=>async()=>{const upd={grade:g,remark:rm.value.trim(),gradedAt:Date.now()};if(sc.value!=="")upd.score=Number(sc.value);
+          try{await fs.collection("submissions").doc(a.id+"_"+s.studentUid).update(upd)}catch(e){alert("Could not save grade: "+e.message)}};
+        const pb=el("button","Pass","sm"),fb=el("button","Fail","sm del");pb.onclick=go("pass");fb.onclick=go("fail");
+        p.appendChild(sc);p.appendChild(rm);p.appendChild(pb);p.appendChild(fb);
+      }
+      dt.appendChild(p)});
+    d.appendChild(dt);
+  }
+  function renderAsg(){
+    const box=$("alist"),u=auth.currentUser;box.textContent="";
+    $("amsg").textContent=u?"Follows the faculty, department and level filters at the top.":"Log in (or create a student account) below to see and submit assignments.";
+    if(!u)return;
+    const fac=$("fac").value;
+    const rows=asg.filter(a=>(fac===FACS[0]||a.faculty===fac)&&lvlOk(a.level)&&dOk(a.dept)&&!(gone(a)&&!(canWrite&&(a.uid===u.uid||isAdmin)))).sort((a,b)=>(a.due||9e15)-(b.due||9e15));
+    if(!rows.length){box.appendChild(el("div","No assignments for this faculty, department and level.","empty"));return}
+    rows.forEach(a=>{
+      const d=el("div",null,"lec"),h=el("h4");
+      h.appendChild(el("span",a.faculty||"","tag"));
+      if(a.level&&a.level!==LEVELS[0])h.appendChild(el("span",a.level.replace(" Level","L"),"tag"));
+      if(a.dept)h.appendChild(el("span",a.dept,"tag"));
+      h.appendChild(document.createTextNode("📌 "+(a.code?a.code+": ":"")+(a.title||"")));d.appendChild(h);
+      const closed=a.due&&Date.now()>a.due;
+      d.appendChild(el("p",(a.due?"⏰ Due "+new Date(a.due).toLocaleString()+(closed?" (deadline passed)":""):"No deadline")+(a.by?"  ·  Posted by "+a.by:"")));
+      if(a.desc){const dt=document.createElement("details");dt.appendChild(el("summary","Read the instructions"));dt.appendChild(el("p",a.desc,"mbody"));d.appendChild(dt)}
+      const lu=safeUrl(a.link);if(lu){const l=el("a","Open assignment file","mlink");l.href=lu;l.target="_blank";l.rel="noopener";d.appendChild(l)}
+      if(me.profile)submitBox(d,a,closed);
+      if(canWrite&&(a.uid===u.uid||isAdmin)){
+        subsView(d,a);
+        const x=el("button","Delete assignment","sm del");
+        x.onclick=()=>{if(confirm("Delete this assignment?"))fs.collection("assignments").doc(a.id).delete().catch(()=>alert("Not allowed."))};
+        d.appendChild(x);
+      }
+      box.appendChild(d);
+    });
+  }
+  ["fac","lvl","dpt"].forEach(i=>{$(i).addEventListener("change",renderAsg);$(i).addEventListener("change",renderProds)});
+  function stopAuthed(){unsubs.forEach(f=>f());unsubs=[];authedUid=null;cmts=[];asg=[];mySubs={};subsByAsg={};myOrders={};ordersByBook={};myResults=[];myGpa=[];ownResults=[]}
+  function startAuthed(u){
+    if(authedUid===u.uid)return;stopAuthed();authedUid=u.uid;
+    unsubs.push(fs.collection("assignments").onSnapshot(q=>{asg=q.docs.map(x=>({id:x.id,...x.data()}));renderAsg();refreshDepts()},()=>{}));
+    unsubs.push(fs.collection("comments").onSnapshot(q=>{cmts=q.docs.map(x=>({id:x.id,...x.data()}));renderMats()},()=>{}));
+    unsubs.push(fs.collection("submissions").where("studentUid","==",u.uid).onSnapshot(q=>{mySubs={};q.docs.forEach(x=>{mySubs[x.data().assignmentId]=x.data()});renderAsg();renderMine()},()=>{}));
+    unsubs.push(fs.collection("results").where("studentUid","==",u.uid).onSnapshot(q=>{myResults=q.docs.map(x=>x.data());renderMine()},()=>{}));
+    unsubs.push(fs.collection("gpa").where("studentUid","==",u.uid).onSnapshot(q=>{myGpa=q.docs.map(x=>x.data());renderMine()},()=>{}));
+    if(isLect){const rb=fs.collection("results"),rq=isAdmin?rb:rb.where("ownerUid","==",u.uid);unsubs.push(rq.onSnapshot(q=>{ownResults=q.docs.map(x=>({id:x.id,...x.data()}));renderSets()},()=>{}))}
+    unsubs.push(fs.collection("orders").where("buyerUid","==",u.uid).onSnapshot(q=>{myOrders={};q.docs.forEach(x=>{const o=x.data();myOrders[o.bookId]=o});renderProds()},()=>{}));
+    if(canWrite){const ob=fs.collection("orders"),oq=isAdmin?ob:ob.where("sellerUid","==",u.uid);
+      unsubs.push(oq.onSnapshot(q=>{ordersByBook={};q.docs.forEach(x=>{const o={id:x.id,...x.data()};(ordersByBook[o.bookId]=ordersByBook[o.bookId]||[]).push(o)});renderProds()},()=>{}))}
+    if(canWrite){const base=fs.collection("submissions"),qq=isAdmin?base:base.where("ownerUid","==",u.uid);
+      unsubs.push(qq.onSnapshot(q=>{subsByAsg={};q.docs.forEach(x=>{const s=x.data();(subsByAsg[s.assignmentId]=subsByAsg[s.assignmentId]||[]).push(s)});renderAsg()},()=>{}))}
+  }
+  $("a-save").onclick=async()=>{
+    if(!canWrite||!auth.currentUser){alert("Only approved staff can post.");return}
+    const title=$("a-title").value.trim(),link=$("a-link").value.trim(),desc=$("a-desc").value.trim();
+    if(!title){alert("Enter the assignment title.");return}
+    if(!desc&&!link){alert("Add instructions or a link to the assignment file.");return}
+    if(link&&!safeUrl(link)){alert("The link should start with https://");return}
+    if(desc.length>8000){alert("Instructions too long (max 8000 characters).");return}
+    const dueMs=$("a-due").value?new Date($("a-due").value).getTime():0;
+    try{await fs.collection("assignments").add({...(dueMs?{expireAt:TS(dueMs+ASG_GRACE*864e5)}:{}),code:$("a-code").value.trim(),title:title,faculty:$("a-fac").value,dept:$("a-dpt").value.trim(),level:$("a-lvl").value,desc:desc,link:link,due:dueMs,by:$("a-by").value.trim(),uid:auth.currentUser.uid,created:Date.now()});
+      ["a-code","a-title","a-desc","a-link","a-due"].forEach(i=>$(i).value="");
+    }catch(e){alert("Could not post: "+e.message)}
+  };
+  $("pr-role").onchange=()=>$("pr-st").classList.toggle("hidden",$("pr-role").value!=="student");
+  $("pr-save").onclick=async()=>{
+    const u=auth.currentUser,role=$("pr-role").value,name=$("pr-name").value.trim();
+    if(!u)return;if(!name){alert("Enter your full name.");return}
+    try{
+      if(role==="student"){const dpt=$("pr-dpt").value.trim();if(!dpt){alert("Enter your department.");return}
+        await fs.collection("students").doc(u.uid).set({name:name,email:u.email,matric:$("pr-mat").value.trim(),faculty:$("pr-fac").value,dept:dpt,level:$("pr-lvl").value,created:Date.now()})}
+      else await fs.collection("pending").doc(u.uid).set({email:u.email,name:name,created:Date.now()});
+      $("prof").classList.add("hidden");onUser(u);
+    }catch(e){alert("Could not save: "+e.message)}
+  };
+  function applyProfile(){
+    const p=me.profile;$("who").textContent="Signed in as "+auth.currentUser.email+" · "+p.name+" ("+p.level.replace(" Level","L")+")";
+    if(FACS.includes(p.faculty))$("fac").value=p.faculty;if(LEVELS.includes(p.level))$("lvl").value=p.level;
+    refreshDepts();const o=[].find.call($("dpt").options,x=>x.value.toLowerCase()===(p.dept||"").toLowerCase());if(o)$("dpt").value=o.value;
+  }
+  const CLS=g=>g>=4.5?"First Class":g>=3.5?"Second Class Upper":g>=2.4?"Second Class Lower":g>=1.5?"Third Class":g>=1?"Pass":"Fail";
+  const slug=v=>(v||"").replace(/[^A-Za-z0-9]/g,"").slice(0,60);
+  const pctOf=r=>r.max?r.score/r.max*100:0;
+  function makeTips(terms){
+    const tips=[],res=myResults.slice(),subs=Object.values(mySubs),pf=me.profile;
+    if(terms.length){
+      const last=terms[terms.length-1].gpa,prev=terms.length>1?terms[terms.length-2].gpa:null;
+      if(last>=4.5)tips.push("Excellent work. Keep your routine and help classmates, because explaining topics to others strengthens your own understanding.");
+      else if(last>=3.5)tips.push("You are close to First Class. Find your weakest course and give it extra study time every week.");
+      else if(last>=2.4)tips.push("To move up a class, aim to raise your GPA by about 0.3 each term. Make a weekly study timetable and revise your notes every weekend.");
+      else tips.push("Please meet your course adviser this week to plan your next term, and focus first on courses you failed or carried over.");
+      if(prev!==null){const d=last-prev;
+        if(d<=-0.2)tips.push("Your GPA dropped by "+Math.abs(d).toFixed(2)+" since last term. Think about what changed (attendance, workload, health) and fix that first.");
+        else if(d>=0.2)tips.push("Your GPA rose by "+d.toFixed(2)+". Keep doing what worked for you.")}
+    }
+    const fails=res.filter(r=>r.status==="fail");
+    if(fails.length)tips.push("You did not pass "+fails.slice(0,3).map(r=>r.code+" "+r.title).join(", ")+". Rework those topics with past questions and ask the lecturer for feedback.");
+    const low=res.filter(r=>r.status!=="fail").sort((a,b)=>pctOf(a)-pctOf(b))[0];
+    if(low&&pctOf(low)<60)tips.push("Your lowest passing result is "+low.code+" ("+Math.round(pctOf(low))+"%). A little extra practice there can lift your grade.");
+    const late=subs.filter(x=>x.late).length;
+    if(late)tips.push("You handed in "+late+" assignment(s) late. Start earlier and set a reminder two days before each deadline.");
+    const todo=asg.filter(a=>a.faculty===pf.faculty&&(!a.level||a.level===LEVELS[0]||a.level===pf.level)&&(!a.dept||a.dept.toLowerCase()===(pf.dept||"").toLowerCase())&&!gone(a)&&!mySubs[a.id]);
+    if(todo.length)tips.push("You have "+todo.length+" assignment(s) not yet submitted. Handing in every assignment protects your continuous assessment score.");
+    res.concat(subs).filter(r=>r.remark).slice(0,2).forEach(r=>tips.push("Lecturer feedback: "+r.remark));
+    tips.push("Use the past questions, class notes and textbooks on this site, and attend every class, since lecturers often hint at exam topics.");
+    if(!terms.length&&!res.length)tips.unshift("Your results will appear here once your lecturers upload them.");
+    return tips.slice(0,7);
+  }
+  function renderMine(){
+    const card=$("myres");
+    if(!auth.currentUser||!me.profile){card.classList.add("hidden");return}
+    card.classList.remove("hidden");
+    const g=$("mygpa");g.textContent="";
+    const terms=myGpa.slice().sort((a,b)=>a.updatedAt-b.updatedAt);
+    if(!terms.length)g.appendChild(el("p","Your GPA has not been posted yet.","note"));
+    else{
+      const cg=terms.reduce((t,x)=>t+x.gpa,0)/terms.length,last=terms[terms.length-1];
+      g.appendChild(el("span","GPA "+last.gpa.toFixed(2),"price"));
+      g.appendChild(el("span","CGPA "+cg.toFixed(2)+" · "+CLS(cg),"price"));
+      terms.slice().reverse().forEach(t=>g.appendChild(el("p",t.term+": "+t.gpa.toFixed(2),"note")));
+    }
+    const tb=$("mytips");tb.textContent="";tb.appendChild(el("h4","💡 How to improve"));
+    makeTips(terms).forEach(t=>tb.appendChild(el("p","• "+t,"cm")));
+    const rl=$("myresl");rl.textContent="";
+    const items=myResults.map(r=>({t:r.created,r:r}));
+    Object.keys(mySubs).forEach(k=>{const x=mySubs[k];if(x.grade){const a=asg.find(y=>y.id===k);items.push({t:x.gradedAt||x.created,r:{code:a?a.code:"",title:"Assignment: "+(a?a.title:"(removed)"),status:x.grade,score:x.score,remark:x.remark,max:null}})}});
+    if(!items.length){rl.appendChild(el("div","No results yet.","empty"));return}
+    items.sort((a,b)=>b.t-a.t).forEach(i=>{const r=i.r,d=el("div",null,"lec");
+      d.appendChild(el("h4",(r.code?r.code+": ":"")+r.title));
+      d.appendChild(el("p",(r.score!=null?"Score "+r.score+(r.max?" / "+r.max+" ("+Math.round(pctOf(r))+"%)":"")+" · ":"")+(r.status==="pass"?"✅ PASS":"❌ FAIL")));
+      if(r.remark)d.appendChild(el("p",r.remark,"mbody"));rl.appendChild(d)});
+  }
+  function renderSets(){
+    const b=$("r-sets");if(!b)return;b.textContent="";
+    const grp={};ownResults.forEach(r=>{const k=[r.code,r.title,r.level,r.faculty].join("|");(grp[k]=grp[k]||[]).push(r)});
+    const keys=Object.keys(grp);
+    if(!keys.length){b.appendChild(el("div","Nothing uploaded yet.","empty"));return}
+    keys.forEach(k=>{const rs=grp[k],r0=rs[0],row=el("div",null,"lec");
+      row.appendChild(el("h4",r0.code+": "+r0.title+" · "+r0.level+" · "+rs.length+" student(s)"));
+      const x=el("button","Delete this set","sm del");
+      x.onclick=async()=>{if(!confirm("Delete these results?"))return;const bt=fs.batch();rs.forEach(r=>bt.delete(fs.collection("results").doc(r.id)));try{await bt.commit()}catch(e){alert("Not allowed.")}};
+      row.appendChild(x);b.appendChild(row)});
+  }
+  let roster=[];
+  $("r-mode").onchange=()=>{const gm=$("r-mode").value==="gpa";$("r-resf").classList.toggle("hidden",gm);$("r-term").classList.toggle("hidden",!gm);$("r-roster").textContent="";$("r-save").classList.add("hidden")};
+  $("r-load").onclick=async()=>{
+    const gm=$("r-mode").value==="gpa";
+    if(gm&&!$("r-term").value.trim()){alert("Enter the term, e.g. 2025/2026 First Semester.");return}
+    if(!gm&&(!$("r-code").value.trim()||!$("r-title").value.trim()||!(Number($("r-max").value)>0))){alert("Enter the course code, assessment name and maximum score.");return}
+    try{
+      const q=await fs.collection("students").where("level","==",$("r-lvl").value).get(),dp=$("r-dpt").value.trim().toLowerCase();
+      roster=q.docs.map(x=>({uid:x.id,...x.data()})).filter(x=>x.faculty===$("r-fac").value&&(!dp||(x.dept||"").trim().toLowerCase()===dp)).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+      const box=$("r-roster");box.textContent="";
+      if(!roster.length){box.appendChild(el("div","No registered students found for that faculty, level and department.","empty"));$("r-save").classList.add("hidden");return}
+      roster.forEach((st,i)=>{const row=el("div",null,"lec rr");row.dataset.i=i;
+        row.appendChild(el("h4",(st.name||"")+(st.matric?" ("+st.matric+")":"")));
+        row.appendChild(el("p",[st.dept,st.level].filter(Boolean).join(" · "),"note"));
+        const sc=document.createElement("input");sc.type="number";sc.step="any";sc.className="rs";sc.placeholder=gm?"GPA (0 to 5)":"Score";row.appendChild(sc);
+        if(!gm){const rm=document.createElement("input");rm.className="rm";rm.placeholder="Remark (optional)";rm.maxLength=200;rm.style.marginTop=".4rem";row.appendChild(rm)}
+        box.appendChild(row)});
+      $("r-save").classList.remove("hidden");
+    }catch(e){alert("Could not load students: "+e.message)}
+  };
+  $("r-save").onclick=async()=>{
+    const u=auth.currentUser;if(!u||!isLect){alert("Only lecturers can upload results.");return}
+    const gm=$("r-mode").value==="gpa",code=$("r-code").value.trim(),title=$("r-title").value.trim(),term=$("r-term").value.trim();
+    const max=Number($("r-max").value),pm=Number($("r-pass").value)||40,bt=fs.batch();let n=0,bad=0;
+    document.querySelectorAll("#r-roster .rr").forEach(row=>{
+      const st=roster[+row.dataset.i],v=row.querySelector(".rs").value;if(v==="")return;const num=Number(v);
+      const base={studentUid:st.uid,studentName:st.name||"",matric:st.matric||"",faculty:st.faculty||"",dept:st.dept||"",level:st.level||""};
+      if(gm){if(!(num>=0&&num<=5)){bad++;return}
+        bt.set(fs.collection("gpa").doc(st.uid+"_"+slug(term)),{...base,term:term,gpa:Math.round(num*100)/100,updatedBy:u.uid,updatedAt:Date.now()})}
+      else{if(!(num>=0&&num<=max)){bad++;return}
+        bt.set(fs.collection("results").doc(slug(code+title+st.level)+"_"+u.uid.slice(0,6)+"_"+st.uid),{...base,code:code,title:title,score:num,max:max,passMark:pm,status:(num/max*100>=pm)?"pass":"fail",remark:row.querySelector(".rm").value.trim(),ownerUid:u.uid,created:Date.now()})}
+      n++});
+    if(bad){alert(bad+" entr"+(bad>1?"ies are":"y is")+" out of range. Fix them and save again.");return}
+    if(!n){alert("Enter at least one "+(gm?"GPA.":"score."));return}
+    try{await bt.commit();alert("Saved "+n+" "+(gm?"GPA":"result")+(n>1?"s":"")+" ✅");$("r-roster").textContent="";$("r-save").classList.add("hidden")}catch(e){alert("Could not save: "+e.message)}
+  };
+  let allStuds=[],stOn=false;
+  function renderStuds(){
+    const q=($("st-q").value||"").trim().toLowerCase(),box=$("st-list");box.textContent="";
+    $("st-n").textContent="("+allStuds.length+")";
+    const rows=allStuds.filter(x=>!q||[x.name,x.matric,x.dept,x.faculty,x.level,x.email].join(" ").toLowerCase().indexOf(q)>-1)
+      .sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+    if(!rows.length){box.appendChild(el("div","No students found.","empty"));return}
+    rows.slice(0,100).forEach(x=>{const d=el("div",null,"lec");
+      d.appendChild(el("h4",(x.name||"")+(x.matric?" · "+x.matric:"")));
+      d.appendChild(el("p",[x.faculty,x.dept,x.level].filter(Boolean).join(" · ")));
+      d.appendChild(el("p",x.email||""));box.appendChild(d)});
+    if(rows.length>100)box.appendChild(el("p","Showing the first 100. Use the search to narrow down.","note"));
+  }
+  function startStudents(){
+    if(stOn)return;stOn=true;
+    $("st-q").oninput=renderStuds;
+    fs.collection("students").onSnapshot(q=>{allStuds=q.docs.map(x=>x.data());renderStuds()},()=>{});
+  }
+  $("st-btn").onclick=()=>{$("pr-role").value="student";$("pr-role").classList.add("hidden");$("pr-st").classList.remove("hidden");$("prof").classList.remove("hidden");$("prof").scrollIntoView()};
+  async function sweep(){
+    const now=firebase.firestore.Timestamp.now();
+    const jobs=[["lectures","expireAt",now],["assignments","expireAt",now],["submissions","expireAt",now],["comments","expireAt",now],["comments","created",Date.now()-COMMENT_DAYS*864e5]];
+    for(const j of jobs){
+      try{const q=await fs.collection(j[0]).where(j[1],"<",j[2]).limit(400).get();
+        if(q.empty)continue;const b=fs.batch();q.docs.forEach(x=>b.delete(x.ref));await b.commit()}catch(e){}
+    }
+  }
+  async function onUser(u){
+    me={profile:null};$("pr-role").classList.remove("hidden");$("stest").classList.add("hidden");$("studs").classList.add("hidden");$("bform").classList.add("hidden");$("rform").classList.add("hidden");$("prof").classList.add("hidden");$("aform").classList.add("hidden");isAdmin=false;isLect=false;canWrite=false;$("loggedOut").classList.toggle("hidden",!!u);$("loggedIn").classList.toggle("hidden",!u);
+    $("admin").classList.add("hidden");$("sadmin").classList.add("hidden");$("aadmin").classList.add("hidden");$("madmin").classList.add("hidden");$("pending").classList.add("hidden");
+    if(u){
+      $("who").textContent="Signed in as "+u.email;
+      try{const d=await fs.collection("staff").doc(u.uid).get();canWrite=d.exists;isAdmin=d.exists&&d.data().role==="admin";isLect=d.exists&&(d.data().role==="admin"||d.data().role==="lecturer")}catch(e){}
+      if(isAdmin){$("sadmin").classList.remove("hidden");$("aadmin").classList.remove("hidden");$("studs").classList.remove("hidden");startAdmin();startApprovals();startStudents();sweep()}
+      if(canWrite){$("admin").classList.remove("hidden");$("madmin").classList.remove("hidden");$("aform").classList.remove("hidden");$("bform").classList.remove("hidden");if(isLect)$("rform").classList.remove("hidden");
+        try{const sd=await fs.collection("students").doc(u.uid).get();if(sd.exists){me.profile=sd.data();applyProfile()}}catch(e){}
+        $("stest").classList.toggle("hidden",!(isAdmin&&!me.profile));
+      }
+      else{
+        try{const sd=await fs.collection("students").doc(u.uid).get();
+          if(sd.exists){me.profile=sd.data();applyProfile()}
+          else{const pd=await fs.collection("pending").doc(u.uid).get();
+            if(pd.exists){$("pending").textContent="Your lecturer / course rep request is awaiting admin approval. Refresh after you are approved.";$("pending").classList.remove("hidden")}
+            else $("prof").classList.remove("hidden")}
+        }catch(e){}
+      }
+    }
+    if(u)startAuthed(u);else stopAuthed();
+    render();renderMats();renderAsg();renderProds();renderMine();renderSets()
+  }
+  auth.onAuthStateChanged(onUser);
+  setInterval(()=>{render();renderMats();renderAsg()},60000);
+  const go=fn=>async()=>{try{await fn($("em").value.trim(),$("pw").value)}catch(e){alert(e.message)}};
+  $("login").onclick=go((e,p)=>auth.signInWithEmailAndPassword(e,p));
+  $("signup").onclick=go((e,p)=>auth.createUserWithEmailAndPassword(e,p));
+  $("logout").onclick=()=>auth.signOut();
+}else{
+  $("loggedOut").textContent="Add your Firebase config at the top of the script to turn on login and live updates.";
+}
+</script>
+</body>
+</html>
