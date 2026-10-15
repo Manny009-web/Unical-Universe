@@ -1,7 +1,7 @@
 {
-  "name": "UniVerse - UNICAL Student Portal",
-  "short_name": "UniVerse",
-  "description": "Lectures, assignments, results, textbooks and more for UNICAL students.",
+  "name": "UNIVERSE - CAMPUS",
+  "short_name": "UNIVERSE",
+  "description": "Lectures, assignments, results, textbooks and more for students.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
