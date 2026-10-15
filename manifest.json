@@ -1,6 +1,7 @@
 {
-  "name": "UNIVERSE - CAMPUS",
+    "name": "UNIVERSE - CAMPUS",
   "short_name": "UNIVERSE",
+
   "description": "Lectures, assignments, results, textbooks and more for students.",
   "start_url": "./",
   "scope": "./",
