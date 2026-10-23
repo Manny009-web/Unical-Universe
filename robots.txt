@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://manny009-web.github.io/Universe-Campus/sitemap.xml
